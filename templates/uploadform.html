@@ -1,0 +1,11 @@
+<html>
+<body>
+{% if hosted_files %}
+<h2>Hosted files: {{ hosted_files }}</h2>
+{% end %}
+<form method="post" action="/upload" enctype="multipart/form-data">
+<label for="file">Choose a file to upload...</label><input id="file" type="file" name="payload"/>
+<input type="submit" value="Upload!"/>
+</form>
+</body>
+</html>
