@@ -15,11 +15,11 @@ class BaseHandler(tornado.web.RequestHandler):
     def db(self):
         # Todo: Get from config
         if not hasattr(self, "_db"):
-            self._db = Connection(host="localhost", \
+            self._db_connection = Connection(host="localhost", \
                 database="uploadr",\
                 user="root")
        
-        return self._db
+        return self._db_connection
 
 class MainHandler(BaseHandler):
     def get(self):
