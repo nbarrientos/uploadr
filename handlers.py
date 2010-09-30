@@ -37,10 +37,16 @@ class MainHandler(BaseHandler):
         return row
 
 class UploadHandler(BaseHandler):
+    _ERRORS = { 'EDESCTOOSHORT' : "Description is too small." }
+
     def get(self):
         raise tornado.web.HTTPError(403)
 
     def post(self):
+        desc = tornado.escape.xhtml_escape(self.get_argument("description"))
+        if len(desc) < options.desc_min_len:
+            self.render("uploadfailure.html", reason=self._ERRORS['EDESCTOOSHORT'])
+
         for f in self.request.files['payload']:
             local_fileid = self._get_sha1_sum(f['body'])
             db_fileid, filesize = self._check_file_existence(local_fileid)

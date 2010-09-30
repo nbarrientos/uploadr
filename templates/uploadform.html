@@ -4,7 +4,11 @@
 <h2>Hosted files: {{ hosted_files }}</h2>
 {% end %}
 <form method="post" action="/upload" enctype="multipart/form-data">
+<label for="description">Write a short description</label>
+<input id="description" type="text" name="description"/>
+<br/>
 <label for="file">Choose a file to upload...</label><input id="file" type="file" name="payload"/>
+<br/>
 <input type="submit" value="Upload!"/>
 </form>
 </body>
