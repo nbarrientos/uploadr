@@ -41,17 +41,18 @@ class UploadHandler(BaseHandler):
 
     def post(self):
         for f in self.request.files['payload']:
-                local_fileid, filesize = self._save_file_to_disk(f)
-                fileid = self._save_file_to_db(f, local_fileid, filesize)
+            local_fileid = self._get_sha1_sum(f['body'])
+            db_fileid, filesize = self._check_file_existance(local_fileid)
 
-        self.render("uploadsuccess.html", fileid=fileid, filesize=filesize)
+            if db_fileid is None:
+                filesize = self._save_file_to_disk(f, local_fileid)
+                db_fileid = self._save_file_to_db(f, local_fileid, filesize)
 
-    def _save_file_to_disk(self, f):
-        # Todo: Check if the file already exists (SHA1), if so, locate 
-        # it and simply return it
+            reference = self._save_upload_to_db(db_fileid)
 
-        # The file does not exist, we must create it now
-        local_fileid = str(uuid.uuid4())
+        self.render("uploadsuccess.html", reference=reference, filesize=filesize)
+
+    def _save_file_to_disk(self, f, local_fileid):
         filename = options.storage + "/" + local_fileid
         logging.debug("Writing "+f['filename']+" to "+filename)
         output = open(filename, "w")
@@ -59,23 +60,39 @@ class UploadHandler(BaseHandler):
             output.write(f['body'])
             output.close()
             statinfo = os.stat(filename)
-            return (local_fileid, statinfo.st_size)
+            return statinfo.st_size
         else:
             raise tornado.web.HTTPError(503)
 
     def _save_file_to_db(self, f, local_fileid, filesize):
         name_from_user, ext_from_user = os.path.splitext(f['filename'])
         content_type = f['content_type']
-        sha1hash = self._get_sha1_sum(f['body'])
-        ret = self.db.execute("INSERT INTO files (local_fileid, name_from_user, \
-                ext_from_user, content_type, filesize, sha1) \
-                VALUES ('%s','%s','%s', '%s', %u, '%s')" % \
+        db_fileid = self.db.execute("INSERT INTO files (local_fileid, name_from_user, \
+                ext_from_user, content_type, filesize) \
+                VALUES ('%s','%s','%s', '%s', %u)" % 
                 (local_fileid, name_from_user, ext_from_user, content_type,
-                filesize, sha1hash))
+                filesize))
         #Todo: control execution result
-        return ret
+        return db_fileid
+
+    def _save_upload_to_db(self, db_fileid):
+        reference = uuid.uuid4()
+        client_ip = self.request.remote_ip
+        self.db.execute("INSERT INTO uploads \
+                (file_id, reference, upload_date, client_ip) \
+                VALUES (%u,'%s', NOW(), '%s')" % 
+                (db_fileid, reference, client_ip))
+        #Todo: control execution result
+        return reference
 
     def _get_sha1_sum(self, filebody):
         generator = hashlib.sha1()
         generator.update(filebody)
         return generator.hexdigest()
+
+    def _check_file_existance(self, filehash):
+        row = self.db.get("SELECT id, filesize FROM files \
+                    WHERE files.local_fileid='%s'" % filehash)
+        if row is not None:
+            return (row['id'], row['filesize'])
+        return (None, None)
