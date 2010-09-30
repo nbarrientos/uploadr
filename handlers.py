@@ -63,7 +63,7 @@ class UploadHandler(BaseHandler):
                 filesize = self._save_file_to_disk(f, local_fileid)
                 db_fileid = self._save_file_to_db(f, local_fileid, filesize)
 
-            reference, remove_token = self._save_upload_to_db(db_fileid)
+            reference, remove_token = self._save_upload_to_db(db_fileid, desc)
 
         self.render("uploadsuccess.html", \
             reference=reference, filesize=filesize, remove_token=remove_token)
@@ -91,14 +91,15 @@ class UploadHandler(BaseHandler):
         #Todo: control execution result
         return db_fileid
 
-    def _save_upload_to_db(self, db_fileid):
+    def _save_upload_to_db(self, db_fileid, description):
         reference = uuid.uuid4()
         client_ip = self.request.remote_ip
         remove_token = self._generate_remove_token()
         self.db.execute("INSERT INTO uploads \
-                (file_id, reference, upload_date, client_ip, remove_token) \
-                VALUES (%u,'%s', NOW(), '%s', '%s')" % 
-                (db_fileid, reference, client_ip, remove_token))
+                (file_id, reference, upload_date, client_ip, \
+                remove_token, description) \
+                VALUES (%u,'%s', NOW(), '%s', '%s', '%s')" % 
+                (db_fileid, reference, client_ip, remove_token, description))
         #Todo: control execution result
         return (reference, remove_token)
 
