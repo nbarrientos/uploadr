@@ -42,7 +42,7 @@ class UploadHandler(BaseHandler):
     def post(self):
         for f in self.request.files['payload']:
             local_fileid = self._get_sha1_sum(f['body'])
-            db_fileid, filesize = self._check_file_existance(local_fileid)
+            db_fileid, filesize = self._check_file_existence(local_fileid)
 
             if db_fileid is None:
                 filesize = self._save_file_to_disk(f, local_fileid)
@@ -90,7 +90,7 @@ class UploadHandler(BaseHandler):
         generator.update(filebody)
         return generator.hexdigest()
 
-    def _check_file_existance(self, filehash):
+    def _check_file_existence(self, filehash):
         row = self.db.get("SELECT id, filesize FROM files \
                     WHERE files.local_fileid='%s'" % filehash)
         if row is not None:
