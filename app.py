@@ -15,6 +15,7 @@ from handlers import MainHandler, UploadHandler
 define("port", default=8888, help="run on the given port", type=int)
 define("storage", default="/tmp/storage", help="FIXME", type=str)
 define("desc_min_len", default=15, help="FIXME", type=int)
+define("desc_max_lent", default=150, help="FIXME", type=int)
 
 
 class Application(tornado.web.Application):

@@ -37,16 +37,24 @@ class MainHandler(BaseHandler):
         return row
 
 class UploadHandler(BaseHandler):
-    _ERRORS = { 'EDESCTOOSHORT' : "Description is too small." }
+    _ERRORS = { 'EDESCTOOSHORT' : "Description is too small (min: %s).",
+                'EDESCTOOLONG' : "Description is too long (max: %s)"}
 
     def get(self):
         raise tornado.web.HTTPError(403)
 
     def post(self):
         desc = tornado.escape.xhtml_escape(self.get_argument("description"))
+        reason = None
         if len(desc) < options.desc_min_len:
-            self.render("uploadfailure.html", reason=self._ERRORS['EDESCTOOSHORT'])
+            reason = self._ERRORS['EDESCTOOSHORT'] % options.desc_min_len
+        elif len(desc) > options.desc_max_len:
+            reason = self._ERRORS['EDESCTOOLONG'] % options.desc_max_len
 
+        if reason is not None:
+            self.render("uploadfailure.html", reason=reason)
+
+        # All right!
         for f in self.request.files['payload']:
             local_fileid = self._get_sha1_sum(f['body'])
             db_fileid, filesize = self._check_file_existence(local_fileid)
