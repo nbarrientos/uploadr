@@ -6,6 +6,7 @@ import tornado.web
 import logging
 import uuid
 import hashlib
+import random
 
 from tornado.options import options
 from tornado.database import Connection
@@ -48,9 +49,10 @@ class UploadHandler(BaseHandler):
                 filesize = self._save_file_to_disk(f, local_fileid)
                 db_fileid = self._save_file_to_db(f, local_fileid, filesize)
 
-            reference = self._save_upload_to_db(db_fileid)
+            reference, remove_token = self._save_upload_to_db(db_fileid)
 
-        self.render("uploadsuccess.html", reference=reference, filesize=filesize)
+        self.render("uploadsuccess.html", \
+            reference=reference, filesize=filesize, remove_token=remove_token)
 
     def _save_file_to_disk(self, f, local_fileid):
         filename = options.storage + "/" + local_fileid
@@ -78,12 +80,13 @@ class UploadHandler(BaseHandler):
     def _save_upload_to_db(self, db_fileid):
         reference = uuid.uuid4()
         client_ip = self.request.remote_ip
+        remove_token = self._generate_remove_token()
         self.db.execute("INSERT INTO uploads \
-                (file_id, reference, upload_date, client_ip) \
-                VALUES (%u,'%s', NOW(), '%s')" % 
-                (db_fileid, reference, client_ip))
+                (file_id, reference, upload_date, client_ip, remove_token) \
+                VALUES (%u,'%s', NOW(), '%s', '%s')" % 
+                (db_fileid, reference, client_ip, remove_token))
         #Todo: control execution result
-        return reference
+        return (reference, remove_token)
 
     def _get_sha1_sum(self, filebody):
         generator = hashlib.sha1()
@@ -96,3 +99,10 @@ class UploadHandler(BaseHandler):
         if row is not None:
             return (row['id'], row['filesize'])
         return (None, None)
+
+    def _generate_remove_token(self):
+        base = range(97,123)
+        base.extend(range(48,58))
+        random.shuffle(base)
+        base = base[len(base)/2:]
+        return "".join(chr(c) for c in base)
