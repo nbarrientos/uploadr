@@ -36,7 +36,13 @@ class Application(tornado.web.Application):
         tornado.web.Application.__init__(self, handlers, **settings)
 
 def init_environment():
-    os.mkdir(options.storage)
+    try:
+        os.mkdir(options.storage)
+    except OSError, e: # Workaround FIXME
+        if e.errno == 17: # File exists
+            pass
+        else:
+            raise e
 
 def main():
     tornado.options.parse_command_line()
