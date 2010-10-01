@@ -35,11 +35,15 @@ class Application(tornado.web.Application):
         )
         tornado.web.Application.__init__(self, handlers, **settings)
 
+def init_environment():
+    os.mkdir(options.storage)
+
 def main():
     tornado.options.parse_command_line()
     logging.getLogger().setLevel(logging.DEBUG)
     http_server = tornado.httpserver.HTTPServer(Application())
     http_server.listen(options.port)
+    init_environment()
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
