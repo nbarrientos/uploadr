@@ -28,10 +28,12 @@ class RequestHandler(BaseHandler):
         if filename is None or filesize is None or description is None:
             raise tornado.web.HTTPError(404)
 
+        filesize, units = tools.format_filesize(filesize)
+
         reference = tornado.escape.xhtml_escape(reference)
         self.render("fileinfo.html", filename=filename, 
-                    filesize=filesize, reference=reference,
-                    description=description)
+                    filesize=filesize, units=units, 
+                    reference=reference, description=description)
 
     def post(self):
         raise tornado.web.HTTPError(403)

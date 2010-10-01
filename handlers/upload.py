@@ -12,6 +12,7 @@ import mimetypes
 from tornado.options import options
 
 from handlers.base import BaseHandler
+import tools
 
 class UploadHandler(BaseHandler):
     _ERRORS = { 'EDESCTOOSHORT' : "Description is too small (min: %s).",
@@ -42,8 +43,11 @@ class UploadHandler(BaseHandler):
 
             reference, remove_token = self._save_upload_to_db(f, db_fileid, desc)
 
-        self.render("uploadsuccess.html", \
-            reference=reference, filesize=filesize, remove_token=remove_token)
+        filesize, units = tools.format_filesize(filesize)
+
+        self.render("uploadsuccess.html",
+            reference=reference, filesize=filesize, 
+            units=units, remove_token=remove_token)
 
     def _save_file_to_disk(self, f, local_fileid):
         filename = options.storage + "/" + local_fileid
