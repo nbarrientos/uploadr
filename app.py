@@ -25,7 +25,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", MainHandler),
             (r"/upload", UploadHandler),
-            (r"/request/([^/]+)", RequestHandler),
+            (r"/request/([0-9abcdef]+)", RequestHandler),
         ]
         settings = dict(
 #            cookie_secret="12oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
