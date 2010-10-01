@@ -10,7 +10,8 @@ import uuid
 
 from tornado.options import define, options
 
-from handlers import MainHandler, UploadHandler
+from handlers.main import MainHandler
+from handlers.upload import UploadHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("storage", default="/tmp/storage", help="FIXME", type=str)
