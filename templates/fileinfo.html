@@ -1,0 +1,19 @@
+<html>
+<body>
+
+<h2>File Information</h2>
+
+{%if filename %}
+<h3>Filename: {{ filename }}</h3>
+<h3>Size: {{ filesize }} bytes</h3>
+<a href="/download/{{reference}}/{{filename}}">Download</a>
+{% else %}
+The file does not exist.
+{% end %}
+
+
+<a href="/">Back</a>
+
+</body>
+
+</html>

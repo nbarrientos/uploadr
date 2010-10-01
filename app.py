@@ -12,6 +12,7 @@ from tornado.options import define, options
 
 from handlers.main import MainHandler
 from handlers.upload import UploadHandler
+from handlers.download import RequestHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("storage", default="/tmp/storage", help="FIXME", type=str)
@@ -24,6 +25,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", MainHandler),
             (r"/upload", UploadHandler),
+            (r"/request/([^/]+)", RequestHandler),
         ]
         settings = dict(
 #            cookie_secret="12oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
