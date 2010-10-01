@@ -66,7 +66,7 @@ class UploadHandler(BaseHandler):
         return db_fileid
 
     def _save_upload_to_db(self, f, db_fileid, description):
-        reference = uuid.uuid4()
+        reference = uuid.uuid4().hex
         client_ip = self.request.remote_ip
         remove_token = self._generate_remove_token()
         filename = tornado.escape.xhtml_escape(f['filename'])
