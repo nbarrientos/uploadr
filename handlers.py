@@ -63,7 +63,7 @@ class UploadHandler(BaseHandler):
                 filesize = self._save_file_to_disk(f, local_fileid)
                 db_fileid = self._save_file_to_db(f, local_fileid, filesize)
 
-            reference, remove_token = self._save_upload_to_db(db_fileid, desc)
+            reference, remove_token = self._save_upload_to_db(f, db_fileid, desc)
 
         self.render("uploadsuccess.html", \
             reference=reference, filesize=filesize, remove_token=remove_token)
@@ -81,25 +81,26 @@ class UploadHandler(BaseHandler):
             raise tornado.web.HTTPError(503)
 
     def _save_file_to_db(self, f, local_fileid, filesize):
-        name_from_user, ext_from_user = os.path.splitext(f['filename'])
         content_type = f['content_type']
-        db_fileid = self.db.execute("INSERT INTO files (local_fileid, name_from_user, \
-                ext_from_user, content_type, filesize) \
-                VALUES ('%s','%s','%s', '%s', %u)" % 
-                (local_fileid, name_from_user, ext_from_user, content_type,
-                filesize))
+        db_fileid = self.db.execute("INSERT INTO files (local_fileid, \
+                content_type, filesize) \
+                VALUES ('%s', '%s', %u)" % 
+                (local_fileid, content_type, filesize))
         #Todo: control execution result
         return db_fileid
 
-    def _save_upload_to_db(self, db_fileid, description):
+    def _save_upload_to_db(self, f, db_fileid, description):
         reference = uuid.uuid4()
         client_ip = self.request.remote_ip
         remove_token = self._generate_remove_token()
+        filename = tornado.escape.xhtml_escape(f['filename'])
+        name_from_user, ext_from_user = os.path.splitext(filename)
         self.db.execute("INSERT INTO uploads \
                 (file_id, reference, upload_date, client_ip, \
-                remove_token, description) \
-                VALUES (%u,'%s', NOW(), '%s', '%s', '%s')" % 
-                (db_fileid, reference, client_ip, remove_token, description))
+                remove_token, description, name_from_user, ext_from_user) \
+                VALUES (%u,'%s', NOW(), '%s', '%s', '%s', '%s', '%s')" % 
+                (db_fileid, reference, client_ip, remove_token, 
+                description, name_from_user, ext_from_user))
         #Todo: control execution result
         return (reference, remove_token)
 
