@@ -22,10 +22,13 @@ class RequestHandler(BaseHandler):
         try:
             uuid.UUID(reference)
         except ValueError:
-            raise tornado.web.HTTPError(400)
+            raise tornado.web.HTTPError(404)
 
         filename, filesize = self._request_file(reference)
         logging.debug("Name: %s, Size: %s" % (filename, filesize))
+
+        if filename is None and filesize is None:
+            raise tornado.web.HTTPError(404)
 
         reference = tornado.escape.xhtml_escape(reference)
         self.render("fileinfo.html", filename=filename, 
