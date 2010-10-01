@@ -7,6 +7,7 @@ import logging
 import uuid
 import hashlib
 import random
+import mimetypes
 
 from tornado.options import options
 
@@ -57,7 +58,10 @@ class UploadHandler(BaseHandler):
             raise tornado.web.HTTPError(503)
 
     def _save_file_to_db(self, f, local_fileid, filesize):
-        content_type = f['content_type']
+        filename = tornado.escape.xhtml_escape(f['filename'])
+        content_type = mimetypes.guess_type(filename)[0]
+        if content_type is None:
+            content_type = "application/octet-stream"
         db_fileid = self.db.execute("INSERT INTO files (local_fileid, \
                 content_type, filesize) \
                 VALUES ('%s', '%s', %u)" % 
