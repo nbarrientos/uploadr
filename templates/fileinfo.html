@@ -6,6 +6,7 @@
 {%if filename %}
 <h3>Filename: {{ filename }}</h3>
 <h3>Size: {{ filesize }} bytes</h3>
+<h3>Description: {{ description }}</h3>
 <a href="/download/{{reference}}/{{filename}}">Download</a>
 {% else %}
 The file does not exist.
