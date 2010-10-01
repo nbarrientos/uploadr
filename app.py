@@ -13,11 +13,13 @@ from tornado.options import define, options
 from handlers.main import MainHandler
 from handlers.upload import UploadHandler
 from handlers.download import RequestHandler, DownloadHandler
+from handlers.token import TokenHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("storage", default="/tmp/storage", help="FIXME", type=str)
 define("desc_min_len", default=15, help="FIXME", type=int)
 define("desc_max_len", default=150, help="FIXME", type=int)
+define("max_tokens_per_ip", default=3, help="FIXME", type=int)
 
 
 class Application(tornado.web.Application):
@@ -25,6 +27,7 @@ class Application(tornado.web.Application):
         handlers = [
             (r"/", MainHandler),
             (r"/upload", UploadHandler),
+            (r"/token", TokenHandler),
             (r"/request/([0-9abcdef]+)", RequestHandler),
             (r"/download/([0-9abcdef]+)/([^/]+)", DownloadHandler),
         ]

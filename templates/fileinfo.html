@@ -1,4 +1,8 @@
 <html>
+<head>
+<script type="text/javascript" src="{{ static_url("jquery-1.4.2.min.js") }}"></script>
+<script type="text/javascript" src="{{ static_url("uploadr.js") }}"></script>
+</head>
 <body>
 
 <h2>File Information</h2>
@@ -7,7 +11,10 @@
 <h3>Filename: {{ filename }}</h3>
 <h3>Size: {{ filesize }} bytes</h3>
 <h3>Description: {{ description }}</h3>
-<a href="/download/{{reference}}/{{filename}}">Download</a>
+<div id="token">
+<a id="request_token" href="#">Request download token</a>
+<a id="download_link" href="/download/{{url_escape(reference)}}/{{url_escape(filename)}}?token=">Download</a>
+</div>
 {% else %}
 The file does not exist.
 {% end %}

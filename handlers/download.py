@@ -22,7 +22,8 @@ class RequestHandler(BaseHandler):
         if not tools.validate_reference(reference):
             raise tornado.web.HTTPError(404)
 
-        filename, filesize, description = self._locate_upload(reference)
+        filename, filesize, description, db_uploadid = \
+            self._locate_upload(reference)
 
         if filename is None or filesize is None or description is None:
             raise tornado.web.HTTPError(404)
@@ -38,19 +39,20 @@ class RequestHandler(BaseHandler):
     def _locate_upload(self, reference):
         row = self.db.get("SELECT uploads.name_from_user as n_f_u, \
                     uploads.ext_from_user as e_f_u, files.filesize as fs, \
-                    uploads.description as d \
+                    uploads.description as d, uploads.id as i \
                     FROM uploads INNER JOIN files \
                     ON uploads.file_id = files.id \
                     WHERE uploads.reference = '%s' and uploads.status = %u" % 
                     (reference, us['ONLINE']))
 
-        filename = filesize = description = None
+        filename = filesize = description = db_uploadid = None
         if row is not None:
             filename = "".join([row['n_f_u'], row['e_f_u']])
             filesize = row['fs']
             description = row['d']
+            db_uploadid = row['i']
             
-        return (filename, filesize, description)
+        return (filename, filesize, description, db_uploadid)
 
 
 class DownloadHandler(BaseHandler):
