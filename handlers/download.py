@@ -60,6 +60,8 @@ class RequestHandler(BaseHandler):
 class DownloadHandler(BaseHandler):
     
     def get(self, reference, filename):
+        # Todo: Validate self.get_argument("token")
+
         logging.debug("Downloading file %s as %s" % (reference, filename))
         if not tools.validate_reference(reference):
             raise tornado.web.HTTPError(404)
