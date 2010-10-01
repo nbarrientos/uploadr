@@ -9,6 +9,7 @@ import random
 from tornado.options import options
 
 from handlers.base import BaseHandler
+from status import TOKEN_STATUS as ts
 import tools
 
 class TokenHandler(BaseHandler):
@@ -49,7 +50,9 @@ class TokenHandler(BaseHandler):
 
     def _more_tokens_allowed(self):
         row = self.db.get("SELECT COUNT(token) as c FROM tokens \
-                WHERE tokens.ip = '%s'" % self.request.remote_ip)
+                WHERE tokens.ip = '%s' AND \
+                (tokens.status = %u OR tokens.status = %u)" %
+                (self.request.remote_ip, ts['PENDING'], ts['IN_USE']))
         allowed = True
         if row is not None and row['c'] >= options.max_tokens_per_ip:
             allowed = False
