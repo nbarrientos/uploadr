@@ -24,6 +24,7 @@ class UploadHandler(BaseHandler):
     def post(self):
         desc = tornado.escape.xhtml_escape(self.get_argument("description"))
         reason = None
+        # Todo: Refactor, extract method
         if len(desc) < options.desc_min_len:
             reason = self._ERRORS['EDESCTOOSHORT'] % options.desc_min_len
         elif len(desc) > options.desc_max_len:
