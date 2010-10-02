@@ -41,8 +41,9 @@ def format_filesize(size):
     return (size, units[units_index])
 
 def obtain_captcha_service():
-    return CaptchasDotNet(client='demo', 
-        secret='secret')
+    settings = { "client": options.captcha_net_client,
+            "secret": options.captcha_net_secret }
+    return CaptchasDotNet(**settings)
 
 def devel_env():
     ret = False

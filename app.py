@@ -22,6 +22,8 @@ define("desc_min_len", default=15, help="FIXME", type=int)
 define("desc_max_len", default=150, help="FIXME", type=int)
 define("max_tokens_per_ip", default=3, help="FIXME", type=int)
 define("environment", default="development", help="FIXME", type=str)
+define("captcha_net_client", default="demo", help="FIXME", type=str)
+define("captcha_net_secret", default="secret", help="FIXME", type=str)
 
 class Application(tornado.web.Application):
     def __init__(self):
