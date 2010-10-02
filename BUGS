@@ -1,0 +1,7 @@
+BUGS
+
+File size is not limited on client side. Unfortunately, I have no idea how
+to do it without using Flash :(
+
+Token status change: IN_USE -> REEDEMED is buggy. See commit master@e1ec6d8.
+
