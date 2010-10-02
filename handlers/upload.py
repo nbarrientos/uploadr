@@ -9,6 +9,7 @@ import hashlib
 import random
 import mimetypes
 
+
 from tornado.options import options
 
 from handlers.base import BaseHandler
@@ -22,6 +23,10 @@ class UploadHandler(BaseHandler):
         raise tornado.web.HTTPError(403)
 
     def post(self):
+        if not self._validate_captcha():
+            self.write("Wrong captcha")
+            self.finish()
+
         desc = tornado.escape.xhtml_escape(self.get_argument("description"))
         reason = None
         # Todo: Refactor, extract method
@@ -102,3 +107,18 @@ class UploadHandler(BaseHandler):
         if row is not None:
             return (row['id'], row['filesize'])
         return (None, None)
+
+    def _validate_captcha(self):
+       service = tools.obtain_captcha_service()
+       random = self.get_argument("captcha_random", None)
+       password = self.get_argument("captcha_password", None)
+       if random is None or password is None:
+           return False
+
+       random = tornado.escape.xhtml_escape(random)
+       password = tornado.escape.xhtml_escape(password)
+
+       logging.debug("Validating captcha (Random: %s, Password: %s)" %
+            (random, password))
+
+       return service.validate(random) and service.verify(password)

@@ -7,9 +7,19 @@
 <label for="description">Write a short description</label>
 <input id="description" type="text" name="description"/>
 <br/>
+<input type="hidden" name="captcha_random" value="{{ captcha_random }}"/>
+<br/>
 <label for="file">Choose a file to upload...</label><input id="file" type="file" name="payload"/>
+<br/>
+<label for="captcha_password">Captcha: </label>
+<input id="captcha_password" type="text" name="captcha_password"/>
 <br/>
 <input type="submit" value="Upload!"/>
 </form>
+<div id="captcha">
+    <div id="captcha_img">
+        {{ captcha_image }}
+    </div>
+</div>
 </body>
 </html>

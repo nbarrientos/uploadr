@@ -1,6 +1,8 @@
 import uuid
 import random
 
+from lib.CaptchasDotNet import CaptchasDotNet
+
 def validate_reference(reference):
     try:
         uuid.UUID(reference)
@@ -35,3 +37,7 @@ def format_filesize(size):
         size = "%u" % size
 
     return (size, units[units_index])
+
+def obtain_captcha_service():
+    return CaptchasDotNet(client='demo', 
+        secret='secret')
