@@ -46,6 +46,8 @@ class UploadHandler(BaseHandler):
 
         filesize, units = tools.format_filesize(filesize)
 
+        logging.debug("New reference created: %s" % reference)
+
         self.render("uploadsuccess.html",
             reference=reference, filesize=filesize, 
             units=units, remove_token=remove_token)
