@@ -14,6 +14,13 @@
 <div id="token">
 <a id="request_token" href="#">Request download token</a>
 <a id="download_link" href="/download/{{url_escape(reference)}}/{{url_escape(filename)}}?token=">Download</a>
+
+<div id="delete">
+<form method="post" action="/delete/{{url_escape(reference)}}">
+<label for="delete-token">Delete token: </label><input id="delete-token" type="text" size="22" name="token"/>
+<input type="submit" value="Delete!"/>
+</form>
+</div>
 </div>
 {% else %}
 The file does not exist.
