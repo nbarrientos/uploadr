@@ -14,6 +14,7 @@ from handlers.main import MainHandler
 from handlers.upload import UploadHandler
 from handlers.download import RequestHandler, DownloadHandler
 from handlers.token import TokenHandler
+from handlers.delete import DeleteHandler
 
 define("port", default=8888, help="run on the given port", type=int)
 define("storage", default="/tmp/storage", help="FIXME", type=str)
@@ -30,6 +31,7 @@ class Application(tornado.web.Application):
             (r"/token", TokenHandler),
             (r"/request/([0-9abcdef]+)", RequestHandler),
             (r"/download/([0-9abcdef]+)/([^/]+)", DownloadHandler),
+            (r"/delete/([0-9abcdef]+)", DeleteHandler),
         ]
         settings = dict(
 #            cookie_secret="12oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
