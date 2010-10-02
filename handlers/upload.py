@@ -109,6 +109,9 @@ class UploadHandler(BaseHandler):
         return (None, None)
 
     def _validate_captcha(self):
+       if tools.devel_env():
+           return True
+
        service = tools.obtain_captcha_service()
        random = self.get_argument("captcha_random", None)
        password = self.get_argument("captcha_password", None)

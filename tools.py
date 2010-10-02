@@ -1,6 +1,8 @@
 import uuid
 import random
 
+from tornado.options import options
+
 from lib.CaptchasDotNet import CaptchasDotNet
 
 def validate_reference(reference):
@@ -41,3 +43,9 @@ def format_filesize(size):
 def obtain_captcha_service():
     return CaptchasDotNet(client='demo', 
         secret='secret')
+
+def devel_env():
+    ret = False
+    if options.environment == "development":
+        ret = True
+    return ret

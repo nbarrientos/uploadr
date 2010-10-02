@@ -21,7 +21,7 @@ define("storage", default="/tmp/storage", help="FIXME", type=str)
 define("desc_min_len", default=15, help="FIXME", type=int)
 define("desc_max_len", default=150, help="FIXME", type=int)
 define("max_tokens_per_ip", default=3, help="FIXME", type=int)
-
+define("environment", default="development", help="FIXME", type=str)
 
 class Application(tornado.web.Application):
     def __init__(self):
