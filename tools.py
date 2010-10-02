@@ -16,10 +16,10 @@ def generate_token(prefix):
     return prefix + "".join(chr(c) for c in base)
 
 def generate_download_token():
-    return generate_token("dt")
+    return generate_token("d")
 
 def generate_remove_token():
-    return generate_token("") # Fixme
+    return generate_token("r")
 
 def format_filesize(size):
     units = ("B", "KiB", "MiB", "GiB", "TiB")

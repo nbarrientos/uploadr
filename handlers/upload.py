@@ -76,7 +76,7 @@ class UploadHandler(BaseHandler):
     def _save_upload_to_db(self, f, db_fileid, description):
         reference = uuid.uuid4().hex
         client_ip = self.request.remote_ip
-        remove_token = self._generate_remove_token()
+        remove_token = tools.generate_remove_token()
         filename = tornado.escape.xhtml_escape(f['filename'])
         name_from_user, ext_from_user = os.path.splitext(filename)
         self.db.execute("INSERT INTO uploads \
@@ -99,10 +99,3 @@ class UploadHandler(BaseHandler):
         if row is not None:
             return (row['id'], row['filesize'])
         return (None, None)
-
-    def _generate_remove_token(self):
-        base = range(97,123)
-        base.extend(range(48,58))
-        random.shuffle(base)
-        base = base[len(base)/2:]
-        return "".join(chr(c) for c in base)
